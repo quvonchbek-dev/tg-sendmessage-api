@@ -10,7 +10,7 @@ app = FastAPI()
 class Message(BaseModel):
     phone: str
     message: str
-    name: str | None = None
+    name: str | None = ""
 
 
 @app.get("/")
