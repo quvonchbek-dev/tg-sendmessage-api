@@ -18,9 +18,8 @@ class TelegramAccount(models.Model):
 
 class Contact(models.Model):
     phone = models.CharField(max_length=30, verbose_name="Phone number of client")
-    chat_id = models.CharField(max_length=30, verbose_name="Chat ID of client.")
+    chat_id = models.IntegerField(verbose_name="Chat ID of client.")
     name = models.CharField(max_length=100, verbose_name="Contact name")
-    is_open = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_change = models.DateTimeField(auto_now=True)
 

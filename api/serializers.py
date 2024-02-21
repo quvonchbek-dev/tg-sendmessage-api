@@ -3,6 +3,13 @@ from django.urls import path, include
 from rest_framework import routers, serializers, viewsets
 
 
+class MessageSerializer(serializers.Serializer):
+    phone = serializers.CharField(max_length=30)
+    merchant_id = serializers.CharField(max_length=255)
+    message = serializers.CharField(max_length=None, min_length=None, allow_blank=True)
+    msg_type = serializers.ChoiceField(["text", "image", "audio", "video", "file"])
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
