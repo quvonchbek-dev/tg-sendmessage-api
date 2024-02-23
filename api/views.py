@@ -20,12 +20,9 @@ class SendMessageView(APIView):
     def post(self, request: Request):
         serializer = MessageSerializer(data=request.data)
         if not serializer.is_valid(raise_exception=True):
-            return Response(dict(status=False, msg="Message object format is invalid"))
+            status = enums.CustomStatusCodes.VALIDATION_ERROR
+            return Response(dict(status=int(status), description=str(status), msg_id=None))
         data: OrderedDict = serializer.validated_data
-        msg_id = res = enums.send_message(**data)
-        status, error = True, None
-        if not isinstance(res, int):
-            status = False
-            error = res
-            msg_id = None
-        return Response(dict(status=status, error=error, msg_id=msg_id))
+        status, msg_id = enums.send_message(**data)
+        status: enums.CustomStatus
+        return Response(dict(status=int(status), description=str(status), msg_id=msg_id))

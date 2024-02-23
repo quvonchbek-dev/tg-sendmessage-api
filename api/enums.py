@@ -16,6 +16,29 @@ if __name__ == '__main__':
 from backend.models import TelegramAccount, Contact
 
 
+class CustomStatus:
+    def __init__(self, code, description):
+        self.code = code
+        self.description = description
+
+    def __str__(self):
+        return f"{self.description}"
+
+    def __int__(self):
+        return self.code
+
+    def __dict__(self):
+        return dict(code=self.code, message=self.description)
+
+
+class CustomStatusCodes:
+    SUCCESS = CustomStatus(0, "Success.")
+    UNKNOWN_ERROR_OCCURRED = CustomStatus(-1, "Unknown error has been occurred.")
+    MERCHANT_NOT_FOUND = CustomStatus(-2, "Merchant account not found.")
+    UNABLE_TO_FIND_USER = CustomStatus(-3, "Unable to find user with phone number.")
+    VALIDATION_ERROR = CustomStatus(-4, "Request body is not valid.")
+
+
 def get_chat_id(phone: str, client: Client, contact_name="Telegram Client"):
     contact: Contact = Contact.objects.filter(phone=phone).first()
     if contact is None:
@@ -49,19 +72,19 @@ def send_message(phone, message, merchant_id, contact_name="Telegram Client"):
     try:
         account: TelegramAccount = TelegramAccount.objects.filter(merchant_id=merchant_id).first()
         if account is None:
-            return "Merchant account not found"
+            return CustomStatusCodes.MERCHANT_NOT_FOUND, None
         with Client(account.name, account.api_id, account.api_hash, session_string=account.session_string) as client:
             chat_id = get_chat_id(phone, client, contact_name)
             if chat_id:
                 msg: Message = client.send_message(chat_id, message)
-                return msg.id
-            return "Unable to find user with phone number"
+                return CustomStatusCodes.SUCCESS, msg.id
+            return CustomStatusCodes.UNABLE_TO_FIND_USER, None
     except Exception:
         traceback.print_exc()
     finally:
         loop.close()
-    return "Unknown error has been occurred"
+    return CustomStatusCodes.UNKNOWN_ERROR_OCCURRED, None
 
 
 if __name__ == "__main__":
-    print(send_message("+998904613136qqqq", "test", "test"))
+    print(send_message("+998904613136", "test", "test"))
