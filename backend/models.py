@@ -8,7 +8,7 @@ class TelegramAccount(models.Model):
     api_id = models.PositiveBigIntegerField(verbose_name="API ID", null=True, blank=True)
     api_hash = models.CharField(max_length=255, verbose_name="API hash", null=True, blank=True)
     session_string = models.TextField(blank=True, verbose_name="Telegram account session string.")
-    # chat_id = models.CharField(max_length=30, blank=True, null=True)
+    chat_id = models.CharField(max_length=30, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_change = models.DateTimeField(auto_now=True)
 
@@ -24,11 +24,11 @@ class Contact(models.Model):
     last_change = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Contact - {self.phone}"
+        return f"+{self.phone} ({self.name})"
 
 
 class Message(models.Model):
-    class MsgStatus(models.IntegerChoices):
+    class Status(models.IntegerChoices):
         UNKNOWN = 0
         SUCCESS = 1
         SERVER_NOT_RECEIVED = 2
@@ -36,6 +36,9 @@ class Message(models.Model):
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='contact_messages')
     merchant = models.ForeignKey(TelegramAccount, on_delete=models.CASCADE, related_name='merchant_messages')
     body = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    status = models.IntegerField(choices=MsgStatus.choices, default=MsgStatus.UNKNOWN)
+    status = models.IntegerField(choices=Status.choices, default=Status.UNKNOWN)
     msg_id = models.PositiveBigIntegerField("Message ID", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.contact.name} - {self.body}"

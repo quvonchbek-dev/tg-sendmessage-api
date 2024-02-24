@@ -4,6 +4,7 @@ import traceback
 
 import django
 from pyrogram import Client
+from pyrogram.enums import ChatAction
 from pyrogram.errors import PeerIdInvalid
 from pyrogram.raw.types.contacts import ImportedContacts
 from pyrogram.types import InputPhoneContact
@@ -76,6 +77,7 @@ def send_message(phone, message, merchant_id, contact_name="Telegram Client"):
         with Client(account.name, account.api_id, account.api_hash, session_string=account.session_string) as client:
             chat_id = get_chat_id(phone, client, contact_name)
             if chat_id:
+                client.send_chat_action(chat_id, ChatAction.TYPING)
                 msg: Message = client.send_message(chat_id, message)
                 return CustomStatusCodes.SUCCESS, msg.id
             return CustomStatusCodes.UNABLE_TO_FIND_USER, None

@@ -14,8 +14,7 @@ class TestView(APIView):
 
 
 class SendMessageView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    # permission_classes = [IsAuthenticated]
     @swagger_auto_schema(request_body=MessageSerializer)
     def post(self, request: Request):
         serializer = MessageSerializer(data=request.data)
