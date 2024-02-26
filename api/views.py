@@ -1,9 +1,9 @@
 from collections import OrderedDict
 
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response, Request
 
+from utils.functions import check_hash
 from . import enums
 from .serializers import MessageSerializer
 
@@ -20,8 +20,19 @@ class SendMessageView(APIView):
         serializer = MessageSerializer(data=request.data)
         if not serializer.is_valid(raise_exception=True):
             status = enums.CustomStatusCodes.VALIDATION_ERROR
-            return Response(dict(status=int(status), description=str(status), msg_id=None))
+            return Response(dict(status=status.dict(), msgId=None))
         data: OrderedDict = serializer.validated_data
-        status, msg_id = enums.send_message(**data)
-        status: enums.CustomStatus
-        return Response(dict(status=int(status), description=str(status), msg_id=msg_id))
+        ok = check_hash(data)
+        if not ok:
+            status = enums.CustomStatusCodes.INVALID_CREDENTIALS
+            return Response(dict(status=status.dict(), msgId=None))
+
+        status = enums.send_message(data)
+        if isinstance(status, enums.CustomStatus):
+            return Response(dict(status=status.dict(), msgId=None))
+
+        return Response(status)
+
+
+if __name__ == "__main__":
+    pass

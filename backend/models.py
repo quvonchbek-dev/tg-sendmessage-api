@@ -20,6 +20,7 @@ class Contact(models.Model):
     phone = models.CharField(max_length=30, verbose_name="Phone number of client")
     chat_id = models.IntegerField(verbose_name="Chat ID of client.")
     name = models.CharField(max_length=100, verbose_name="Contact name")
+    username = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_change = models.DateTimeField(auto_now=True)
 
