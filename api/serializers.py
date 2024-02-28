@@ -12,3 +12,16 @@ class MessageSerializer(serializers.Serializer):
     message = serializers.CharField(max_length=None, min_length=1, required=True)
     timestamp = serializers.IntegerField()
     hash = serializers.CharField(max_length=255)
+
+
+class NewAccountSerializer(serializers.Serializer):
+    merchant_name = serializers.CharField(max_length=255)
+    merchant_id = serializers.UUIDField()
+    phone = serializers.CharField(max_length=30, default="")
+
+
+class OTPSerializer(serializers.Serializer):
+    phone = serializers.CharField(max_length=30, default="")
+    phone_code_hash = serializers.CharField(max_length=255, default="")
+    phone_code = serializers.CharField(max_length=10, default="")
+    password = serializers.CharField(max_length=255, allow_null=True, allow_blank=True)

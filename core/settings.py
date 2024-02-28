@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     'api', 'backend',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'bot.apps.BotConfig'
 ]
 
 MIDDLEWARE = [

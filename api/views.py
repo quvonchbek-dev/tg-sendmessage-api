@@ -14,7 +14,6 @@ class TestView(APIView):
 
 
 class SendMessageView(APIView):
-    # permission_classes = [IsAuthenticated]
     @swagger_auto_schema(request_body=MessageSerializer)
     def post(self, request: Request):
         serializer = MessageSerializer(data=request.data)
@@ -32,6 +31,19 @@ class SendMessageView(APIView):
             return Response(dict(status=status.dict(), msgId=None))
 
         return Response(status)
+
+
+class AddTelegramAccount(APIView):
+    @swagger_auto_schema(request_body=MessageSerializer)
+    def post(self, request: Request):
+        serializer = MessageSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            status = enums.CustomStatusCodes.VALIDATION_ERROR
+        data: OrderedDict = serializer.validated_data
+        ok = check_hash(data)
+        if not ok:
+            status = enums.CustomStatusCodes.INVALID_CREDENTIALS
+            return Response(dict(status=status.dict()))
 
 
 if __name__ == "__main__":
