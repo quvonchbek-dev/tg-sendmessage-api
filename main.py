@@ -74,7 +74,8 @@ async def update_changes(data: Dict[str | int, Client]):
     for n in news:
         account = await TelegramAccount.objects.aget(chat_id=n)
         app = Client(account.name, account.api_id, account.api_hash, session_string=account.session_string)
-        app.add_handler(MessageHandler(handle_messages, filters=filters.private & filters.create(filter_my_messages)))
+        app.add_handler(MessageHandler(handle_messages,
+                                       filters=filters.private & filters.create(filter_my_messages) & filters.text))
         await app.start()
         chat = await app.get_me()
         logging.info(f"NEW ACCOUNT - {chat.phone_number} - {chat.id} - {chat.first_name}")
@@ -104,7 +105,7 @@ async def main():
 
     while True:
         logging.info("Updating accounts")
-        task = asyncio.create_task(asyncio.sleep(10))
+        task = asyncio.create_task(asyncio.sleep(120))
         update_task = asyncio.create_task(update_changes(apps))
         try:
             await update_task
