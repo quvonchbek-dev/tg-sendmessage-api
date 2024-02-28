@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api', 'backend',
     'rest_framework_simplejwt',
-    'drf_yasg'
+    'drf_yasg',
+    'bot.apps.BotConfig'
 ]
 
 MIDDLEWARE = [
@@ -101,6 +102,17 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PYROGRAM_BOT = {
+        "BOT_NAME": "Pyrogram Bot",  # This is only for reference, system will identify real name from get_me()
+        "BOT_TOKEN": "AgDPVx8ACEBzDNJP4o-gltawdiIedGDkrAKx_mR0N8hgrB8EIQuyxHOxlx8sCBlHbc8f3QNXveNEyxNEb0TBrJ6OVhNSX08cgd7o3ia4zZqLeL6Ij8d-Fgv0ryayK2B4qjqrjP3rNgOdBQTBx8u8ysZ1saRqfal93jHWP0JebJ5MMqUCNzy7by_7bcav-2sTjZfMzlG-Y4PCNk0x6dHakbGtMj0ZW-Bg9FvBtFxTxEWv-_EAh1GM-pB0B_7NF802PqD400vv1bwK7L_Q6_XZA6IjjeqTPL9zC2uZ26SOXCMrDVmyPweUZK5EwfdDx7AymagQ76osRIZ5ScWWhWu0tZjsDHxwOQAAAAGPuKZbAA",
+        "API_ID": 13588255,
+        "API_HASH": "3c99c5d23ba13cc43d1018f9ac57cb53",
+        "ADMINS": (1183161840,),
+        "NOTIFY_STARTUP_ADMINS": True,
+        "NOTIFY_SHUTDOWN_ADMINS": True,
+        }
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

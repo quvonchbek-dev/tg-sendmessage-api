@@ -9,8 +9,8 @@ from pyrogram.types import Message
 
 
 def gen_hash(data: dict):
-    txt = (f'{data.get("chatId", "")}{data.get("merchantId", "")}'
-           f'{data.get("message", "")}{data.get("timestamp", "")}'
+    txt = (f'{data.get("chatId") or ""}{data.get("merchantId") or ""}'
+           f'{data.get("message") or ""}{data.get("timestamp") or ""}'
            f'{os.getenv("SECRET")}')
     return hashlib.sha256(txt.encode()).hexdigest()
 
@@ -35,8 +35,7 @@ def send_message_to_server(msg: Message, merchant_id: str, phone=None):
     data["hash"] = gen_hash(data)
     print(data)
 
-    # resp = requests.post("https://api-dev.lamenu.uz/api/notifications/v1/telegram/chat", json=data,
-    #                      headers={"Authorization": f"Bearer {os.getenv('API_TOKEN')}"})
+    # resp = requests.post("http://192.168.31.223:8107/api/notifications/v1/telegram/chat", json=data)
     # print(resp.status_code, resp.text)
     # try:
     #     jsn = resp.json()
