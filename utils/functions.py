@@ -1,12 +1,13 @@
+import asyncio
 import hashlib
 import os
 import traceback
 from datetime import datetime
 
 import pytz
-from asgiref.sync import async_to_sync
 from dotenv import load_dotenv
 from pyrogram import Client
+from pyrogram.errors import PhoneCodeExpired
 from pyrogram.types import Message, SentCode, User, TermsOfService
 
 load_dotenv()
@@ -49,9 +50,9 @@ def send_message_to_server(msg: Message, merchant_id: str, phone=None):
     return False
 
 
-@async_to_sync
-async def a_send_code_request(account_name, phone):
-    app = Client(account_name, os.getenv("API_ID"), os.getenv("API_HASH"), in_memory=True)
+# @async_to_sync
+async def send_code_request(account_name, phone, test_mode=False):
+    app = Client(account_name, os.getenv("API_ID"), os.getenv("API_HASH"), test_mode=test_mode)
     await app.connect()
     sent_code: SentCode = await app.send_code(phone)
     code_hash = sent_code.phone_code_hash
@@ -59,22 +60,52 @@ async def a_send_code_request(account_name, phone):
     return code_hash
 
 
-async def try_sign_in(account_name, phone, code, code_hash, password=None):
-    app = Client(account_name, os.getenv("API_ID"), os.getenv("API_HASH"), in_memory=True)
+async def try_sign_in2(account_name, phone, code, code_hash, password=None, test_mode=False):
+    app = Client(account_name, os.getenv("API_ID"), os.getenv("API_HASH"))
     try:
         await app.connect()
         chat, terms, ok = await app.sign_in(phone_number=phone, phone_code_hash=code_hash, phone_code=code)
         chat: User
         terms: TermsOfService
         print(f"SIGNED_IN:", chat.first_name)
-        print()
+        return app.load_session()
+    except PhoneCodeExpired:
+        print("Phone code expired. Requesting a new one...")
+        code_hash = await send_code_request(account_name, phone)
+        code = input("Enter the new code: ")
+        return await try_sign_in(account_name, phone, code, code_hash, password=password, test_mode=test_mode)
     except:
         traceback.print_exc()
     finally:
         await app.disconnect()
 
 
-# send_code_request = async_to_sync(a_send_code_request, "send_code_request")
+# @async_to_sync
+async def try_sign_in(account_name, phone, code, code_hash, password=None, test_mode=False):
+    app = Client(account_name, os.getenv("API_ID"), os.getenv("API_HASH"), test_mode=test_mode)
+    try:
+        await app.connect()
+        chat, terms, ok = await app.sign_in(phone_number=phone, phone_code_hash=code_hash, phone_code=code)
+        chat: User
+        terms: TermsOfService
+        print(f"SIGNED_IN:", chat.first_name)
+        return app.load_session()
+    except:
+        traceback.print_exc()
+    finally:
+        await app.disconnect()
+
+
+async def main():
+    name = "abcd"
+    phone = "+998904613136"
+    code_hash = await send_code_request(name, phone, test_mode=True)
+    print(code_hash)
+    # code_hash = "926aa568cb51265734"
+    code = input("CODE:")
+    session_string = await try_sign_in2(account_name=name, phone=phone, code=code, code_hash=code_hash, test_mode=True)
+    print(session_string)
+
 
 if __name__ == "__main__":
-    a_send_code_request("name", "998904613136", int(os.getenv("API_ID")), os.getenv("API_HASH"))
+    asyncio.run(main())
