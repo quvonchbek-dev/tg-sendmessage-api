@@ -1,12 +1,11 @@
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from api.views import TestView, SendMessageView
-
+from api.views import SendMessageView, send_code_view, resend_code_view, TestView
+from api import views
 schema_view = get_schema_view(
     openapi.Info(
         title="Telegram Userbot API",
@@ -27,6 +26,10 @@ urlpatterns = [
     # path('api-auth', include('rest_framework.urls')),
     # path('api/v1/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/v1/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    # path('api/v1/test', TestView.as_view(), name="test_view"),
-    path('api/v1/sendMessage', SendMessageView.as_view(), name="send_message")
+    path('api/v1/test', TestView.as_view(), name="test"),
+    path('api/v1/sendMessage', SendMessageView.as_view(), name="send_message"),
+    path('api/v1/sendCode', send_code_view, name="send_code"),
+    path('api/v1/reSendCode', resend_code_view, name="resend_code"),
+    path('api/v1/checkCode', views.check_code_view, name="check_code"),
+    path('api/v1/checkPassword', views.check_password_view, name="check_password"),
 ]
