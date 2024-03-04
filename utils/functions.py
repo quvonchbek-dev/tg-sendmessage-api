@@ -5,6 +5,7 @@ import traceback
 from datetime import datetime
 
 import pytz
+import requests
 from dotenv import load_dotenv
 from pyrogram import Client
 from pyrogram.errors import PhoneCodeExpired
@@ -40,13 +41,13 @@ def send_message_to_server(msg: Message, merchant_id: str, phone=None):
     data["hash"] = gen_hash(data)
     print(data)
 
-    # resp = requests.post("http://192.168.31.223:8107/api/notifications/v1/telegram/chat", json=data)
-    # print(resp.status_code, resp.text)
-    # try:
-    #     jsn = resp.json()
-    #     return jsn.get("status") == 1
-    # except:
-    #     traceback.print_exc()
+    resp = requests.post(f"{os.getenv('SERVER_ENDPOINT')}/api/notifications/v1/telegram/chat", json=data)
+    print(resp.status_code, resp.text)
+    try:
+        jsn = resp.json()
+        return jsn.get("status") == 1
+    except:
+        traceback.print_exc()
     return False
 
 
@@ -63,7 +64,6 @@ async def send_code_request(account_name, phone, test_mode=False):
 async def try_sign_in2(account_name, phone, code, code_hash, password=None, test_mode=False):
     app = Client(account_name, os.getenv("API_ID"), os.getenv("API_HASH"))
     try:
-        await app.connect()
         chat, terms, ok = await app.sign_in(phone_number=phone, phone_code_hash=code_hash, phone_code=code)
         chat: User
         terms: TermsOfService
