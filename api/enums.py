@@ -103,6 +103,9 @@ def send_message(data: dict):
                 return CustomStatusCodes.UNABLE_TO_FIND_USER
             client.send_chat_action(identifier, ChatAction.TYPING)
             msg: Message = client.send_message(identifier, data.get("message"))
+            location = data.get("location")
+            if location:
+                client.send_location(chat_id=identifier, latitude=location.get("latitude"), longitude=location.get("longitude"))
             chat = client.get_chat(identifier)
             data["username"] = chat.username
             data["chatId"] = chat.id
