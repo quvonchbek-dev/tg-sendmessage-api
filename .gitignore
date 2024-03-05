@@ -6,6 +6,7 @@ venv/
 *.log
 *.session
 *__pycache__*
+temp.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
